@@ -13,20 +13,29 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(new Uint8Array(anecdotes.length))
+
+  const AddVote = s => {
+    const copy = [...points]
+    copy[s] += 1
+    setPoints(copy)
+  }
 
   return (
     <div>
-      {anecdotes[selected]}
-      <br/>
+      {anecdotes[selected]}<br/> 
+      has {points[selected]} votes<br/>
+      <Button text = 'vote' onClick = {() => AddVote(selected)}/>
       <Button text = 'next anecdote' onClick = {() => setSelected(Random(anecdotes.length))} />
     </div>
   )
 }
 
+
+
 const Button = props => <button onClick={props.onClick}>{props.text}</button>
 
-function Random(max) {
-  return Math.floor(Math.random()*max)
-}
+const Random = max => Math.floor(Math.random()*max)
+
 
 export default App
