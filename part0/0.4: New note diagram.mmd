@@ -1,0 +1,37 @@
+sequenceDiagram
+    
+
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note {
+    activate server
+
+    Note left of server: The server starts executing the JavaScript code that creates a new note with the request body and new date, and pushes it to the notes array stored in data.json before returning a redirect response.
+
+    server-->>browser: URL redirect to /notes
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+    activate server
+    server-->>browser: HTML document
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
+    activate server
+    server-->>browser: the css file
+    deactivate server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    activate server
+    server-->>browser: the JavaScript file
+    deactivate server
+
+    Note right of browser: The browser executes the JS code to perform GET request to fetch JSON data from server
+
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    activate server
+    server-->>browser: [{ "content": "estoy bien", "date": "2023-03-2722:27:20.150Z" }, ... ]
+    deactivate server
+
+    Note right of browser: The browser executes callback function to render the notes array received as the response body

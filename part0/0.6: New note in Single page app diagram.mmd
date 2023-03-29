@@ -1,0 +1,14 @@
+sequenceDiagram
+    
+    participant browser
+    participant server
+    
+    Note right of browser: The browser executes function to creates a new note based on the form content with a new date, push it to the notes array, calls function to redraw the document using the updated array, 
+    Note right of browser: The browser executes function to post the new note back to the server.
+    
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    server-->>browser: HTML document
+    deactivate server
+
+    Note left of server: The server executes code to create a new note with the request body and new date, and pushes it to the notes array stored in data.json
