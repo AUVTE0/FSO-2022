@@ -60,7 +60,6 @@ const App = () => {
 
 const Header =  props => <h1>{props.text}</h1>
 const Button = props => <button onClick={props.onClick}>{props.text}</button>
-const StatisticLine = props => <p>{props.text} {props.value}</p>
 
 
 export default App
