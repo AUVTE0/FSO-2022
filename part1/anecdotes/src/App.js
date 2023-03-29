@@ -14,19 +14,27 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(new Uint8Array(anecdotes.length))
+  const [max, setMax] = useState(0)
 
   const AddVote = s => {
     const copy = [...points]
     copy[s] += 1
     setPoints(copy)
+    if(copy[s] > copy[max]){
+      setMax(s)
+    }
   }
 
   return (
     <div>
+      <Header text = 'Anecdote of the day'/>
       {anecdotes[selected]}<br/> 
       has {points[selected]} votes<br/>
       <Button text = 'vote' onClick = {() => AddVote(selected)}/>
       <Button text = 'next anecdote' onClick = {() => setSelected(Random(anecdotes.length))} />
+      <Header text = 'Anecdote with the most votes'/>
+      {anecdotes[max]} <br/>
+      has {points[max]} votes <br/>
     </div>
   )
 }
@@ -34,7 +42,7 @@ const App = () => {
 
 
 const Button = props => <button onClick={props.onClick}>{props.text}</button>
-
+const Header =  props => <h1>{props.text}</h1>
 const Random = max => Math.floor(Math.random()*max)
 
 
