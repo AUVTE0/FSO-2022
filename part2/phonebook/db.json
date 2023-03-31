@@ -19,6 +19,21 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "Wiliam Tell",
+      "number": "123456",
+      "id": 5
+    },
+    {
+      "name": "Henry Popping",
+      "number": "19573653",
+      "id": 6
+    },
+    {
+      "name": "William Tell",
+      "number": "123235",
+      "id": 7
     }
   ]
 }

@@ -18,7 +18,10 @@ const App = () => {
   const addName = (e) => {
     e.preventDefault()
     if(persons.map(p=>p.name).includes(newName)){
-      alert(`${newName} is already added to phone book`)
+      if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`))
+      {
+        updateNumber(newName, newNumber)
+      }
     }
     else{
       const newPersonObj = {name: newName, number: newNumber}
@@ -34,6 +37,17 @@ const App = () => {
     }  
   }
 
+  const updateNumber = (name, newNumber) => {
+    const personObj = persons.find(p => p.name === name)
+    const updatedPersonObj = {...personObj, number: newNumber}
+    personService
+      .update(updatedPersonObj)
+      .then(
+        setPersons(persons.map(p => p.id !== personObj.id ? p : updatedPersonObj))
+      ) 
+      .catch(res => console.log('Error updating person!'))
+  }
+
   const deleteName = (id) => {
     if(window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)){
       personService
@@ -42,7 +56,7 @@ const App = () => {
         deletedPersonObj => {
           setPersons(persons.filter(p => p.id !== deletedPersonObj.id))
         })
-      .catch(res => console.log('Error deleteing person!'))
+      .catch(res => console.log('Error deleting person!'))
     }
   }
   const nameContains = person => person.name.toLowerCase().includes(filter.toLowerCase())
