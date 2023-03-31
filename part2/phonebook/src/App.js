@@ -7,6 +7,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -15,6 +16,7 @@ const App = () => {
       .catch(res => console.log('Error getting all persons!'))  
   })
 
+  //helper functions
   const addName = (e) => {
     e.preventDefault()
     if(persons.map(p=>p.name).includes(newName)){
@@ -32,6 +34,8 @@ const App = () => {
             setPersons(persons.concat(personObj))
             setNewName('')
             setNewNumber('')
+            setMessage(`Added ${personObj.name}`)
+            setTimeout(()=>setMessage(null), 3000)
           })
         .catch(res => console.log('Error adding person!'))
     }  
@@ -42,19 +46,26 @@ const App = () => {
     const updatedPersonObj = {...personObj, number: newNumber}
     personService
       .update(updatedPersonObj)
-      .then(
+      .then(updatedPersonObj => {
         setPersons(persons.map(p => p.id !== personObj.id ? p : updatedPersonObj))
-      ) 
+        setNewName('')
+        setNewNumber('')
+        setMessage(`Updated ${updatedPersonObj.name}'s number`)
+        setTimeout(()=>setMessage(null), 3000)
+      }) 
       .catch(res => console.log('Error updating person!'))
   }
 
   const deleteName = (id) => {
-    if(window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)){
+    const deletedPerson = persons.find(p => p.id === id)
+    if(window.confirm(`Delete ${deletedPerson.name}?`)){
       personService
       .remove(id)
       .then(
         deletedPersonObj => {
           setPersons(persons.filter(p => p.id !== deletedPersonObj.id))
+          setMessage(`Deleted ${deletedPerson.name}`)
+          setTimeout(()=>setMessage(null), 3000)
         })
       .catch(res => console.log('Error deleting person!'))
     }
@@ -67,6 +78,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter filter={filter} handleFilterChange={handleFilterChange}/>
       <h2>add a new</h2>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addName={addName}/>
@@ -110,7 +122,17 @@ const Persons = ({persons, nameContains, deleteName}) => {
       )}
       
     </div>
-  )
-  
+  ) 
 }
+
+const Notification = ({message}) => {
+  if (message === null){
+    return null
+  }
+  return(
+    <div className='noti'>{message}</div>
+  )
+}
+
+
 export default App
