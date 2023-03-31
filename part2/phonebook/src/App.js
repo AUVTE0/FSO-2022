@@ -8,10 +8,11 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const baseUrl = "http://localhost:3001/persons"
   
   useEffect(() => {
     axios
-      .get("http://localhost:3001/persons")
+      .get(baseUrl)
       .then(res => {
         setPersons(res.data)
       })
@@ -25,9 +26,14 @@ const App = () => {
     }
     else{
       const newPersonObj = {name: newName, number: newNumber}
-      setPersons(persons.concat(newPersonObj))
-      setNewName('')
-      setNewNumber('')
+      axios
+        .post(baseUrl, newPersonObj)
+        .then(res => {
+          setPersons(persons.concat(newPersonObj))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(res => console.log('Error!'))
     }
     
   }
