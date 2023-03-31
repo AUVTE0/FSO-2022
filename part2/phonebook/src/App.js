@@ -34,7 +34,7 @@ const App = () => {
             setPersons(persons.concat(personObj))
             setNewName('')
             setNewNumber('')
-            setMessage(`Added ${personObj.name}`)
+            setMessage({text: `Added ${personObj.name}`, error: false})
             setTimeout(()=>setMessage(null), 3000)
           })
         .catch(res => console.log('Error adding person!'))
@@ -50,10 +50,14 @@ const App = () => {
         setPersons(persons.map(p => p.id !== personObj.id ? p : updatedPersonObj))
         setNewName('')
         setNewNumber('')
-        setMessage(`Updated ${updatedPersonObj.name}'s number`)
+        setMessage({text: `Updated ${updatedPersonObj.name}'s number`, error: false})
         setTimeout(()=>setMessage(null), 3000)
       }) 
-      .catch(res => console.log('Error updating person!'))
+      .catch(res => {
+        console.log('Error updating person!')
+        setMessage({text: `Information of ${name} has already been removed from server`, error: true})
+        setTimeout(()=>setMessage(null), 3000)
+      })
   }
 
   const deleteName = (id) => {
@@ -64,7 +68,7 @@ const App = () => {
       .then(
         deletedPersonObj => {
           setPersons(persons.filter(p => p.id !== deletedPersonObj.id))
-          setMessage(`Deleted ${deletedPerson.name}`)
+          setMessage({text: `Deleted ${deletedPerson.name}`, error: false})
           setTimeout(()=>setMessage(null), 3000)
         })
       .catch(res => console.log('Error deleting person!'))
@@ -130,7 +134,7 @@ const Notification = ({message}) => {
     return null
   }
   return(
-    <div className='noti'>{message}</div>
+    <div className={message.error?'error':'noti'}>{message.text}</div>
   )
 }
 
