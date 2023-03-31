@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-
+import personService from './services/personService'
 
 const App = () => {
   
@@ -8,15 +7,13 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const baseUrl = "http://localhost:3001/persons"
-  
+
   useEffect(() => {
-    axios
-      .get(baseUrl)
-      .then(res => {
-        setPersons(res.data)
-      })
-  
+    personService
+      .getAll()
+      .then(persons => {
+      setPersons(persons)
+    })  
   })
 
   const addName = (e) => {
@@ -26,13 +23,14 @@ const App = () => {
     }
     else{
       const newPersonObj = {name: newName, number: newNumber}
-      axios
-        .post(baseUrl, newPersonObj)
-        .then(res => {
-          setPersons(persons.concat(newPersonObj))
-          setNewName('')
-          setNewNumber('')
-        })
+      personService
+        .add(newPersonObj)
+        .then(
+          personObj => {
+            setPersons(persons.concat(personObj))
+            setNewName('')
+            setNewNumber('')
+          })
         .catch(res => console.log('Error!'))
     }
     
