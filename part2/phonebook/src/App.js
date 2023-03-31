@@ -11,9 +11,8 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then(persons => {
-      setPersons(persons)
-    })  
+      .then(persons => setPersons(persons))
+      .catch(res => console.log('Error getting all persons!'))  
   })
 
   const addName = (e) => {
@@ -31,9 +30,20 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
-        .catch(res => console.log('Error!'))
+        .catch(res => console.log('Error adding person!'))
+    }  
+  }
+
+  const deleteName = (id) => {
+    if(window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)){
+      personService
+      .remove(id)
+      .then(
+        deletedPersonObj => {
+          setPersons(persons.filter(p => p.id !== deletedPersonObj.id))
+        })
+      .catch(res => console.log('Error deleteing person!'))
     }
-    
   }
   const nameContains = person => person.name.toLowerCase().includes(filter.toLowerCase())
   const handleNameChange = e => setNewName(e.target.value)
@@ -47,12 +57,14 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} addName={addName}/>
       <h2>Numbers</h2>
-      <Persons persons={persons} nameContains={nameContains}/>
+      <Persons persons={persons} nameContains={nameContains} deleteName={deleteName}/>
     </div>
   )
 }
 
+// Components
 const Filter = ({filter, handleFilterChange}) => <div>filter shown with <input value={filter} onChange={handleFilterChange}/></div>
+
 const PersonForm = ({newName, newNumber, handleNameChange, handleNumberChange, addName}) => {
   return( 
   <form onSubmit={addName}>
@@ -68,5 +80,23 @@ const PersonForm = ({newName, newNumber, handleNameChange, handleNumberChange, a
   </form>
   )
 }
-const Persons = ({persons, nameContains}) => persons.filter(nameContains).map(person => <p key={person.name}>{person.name} {person.number}</p>)
+const Persons = ({persons, nameContains, deleteName}) => {
+  return(
+    <div>
+      {persons
+        .filter(nameContains)
+        .map(person => {
+          return(
+            <div key={person.id}>
+              <span>{person.name} {person.number} </span>
+              <button onClick={()=>deleteName(person.id)}>delete</button>
+            </div>
+          )
+        }
+      )}
+      
+    </div>
+  )
+  
+}
 export default App
