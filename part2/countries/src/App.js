@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import axios from 'axios';
+import weatherService from './services/weatherService';
 const baseUrl = "https://restcountries.com/v3.1/all"
 
 function App() {
@@ -50,6 +51,7 @@ const Countries = ({countries, filter, handleShow}) => {
 }
 const Warning = () => <p>Too many matches, specify another filter</p>
 const Country = ({country}) => {
+  
   return (
     <div>
       <h1>{country.name.common}</h1>
@@ -57,14 +59,37 @@ const Country = ({country}) => {
         capital {country.capital[0]} <br/> 
         area {country.area}
       </p>
-      <strong>languages:</strong>
+      <h4>languages:</h4>
       <ul>
         {Object.values(country.languages).map(l => <li key={l}>{l}</li>)}
       </ul>
       <img src={country.flags.png} alt={country.flags.alt}></img>
+      <Weather country={country}/>
     </div>
 
   )
+}
+
+const Weather = ({country}) => {
+  const [weather, setWeather] = useState(null)
+  
+  useEffect(() => {
+    const latlng = country.capital.latlng
+    weatherService
+      .get(country.capitalInfo.latlng)
+      .then(data => setWeather(data))
+  }, [])
+  if(!weather){return null}
+  console.log(weather.weather[0].icon)
+  return(
+    <div>
+      <h3>Weather in {country.capital[0]}</h3>
+      <p>temperature {weather.main.temp} Celsius</p>
+      <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description}></img>
+      <p>wind {weather.wind.speed} m/s</p>
+    </div>
+  )
+
 }
 
 export default App;
