@@ -14,7 +14,7 @@ const App = () => {
       .getAll()
       .then(persons => setPersons(persons))
       .catch(res => console.log('Error getting all persons!'))  
-  })
+  }, [])
 
   //helper functions
   const addName = (e) => {

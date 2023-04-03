@@ -74,11 +74,11 @@ const Weather = ({country}) => {
   const [weather, setWeather] = useState(null)
   
   useEffect(() => {
-    const latlng = country.capital.latlng
     weatherService
       .get(country.capitalInfo.latlng)
       .then(data => setWeather(data))
-  }, [])
+  }, [country])
+  
   if(!weather){return null}
   console.log(weather.weather[0].icon)
   return(
