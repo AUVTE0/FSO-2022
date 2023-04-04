@@ -80,7 +80,6 @@ const Weather = ({country}) => {
   }, [country])
   
   if(!weather){return null}
-  console.log(weather.weather[0].icon)
   return(
     <div>
       <h3>Weather in {country.capital[0]}</h3>

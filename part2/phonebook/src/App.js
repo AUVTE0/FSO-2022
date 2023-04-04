@@ -17,8 +17,14 @@ const App = () => {
   }, [])
 
   //helper functions
+  const showMessage = (message, isError) => {
+    setMessage({text: message, error: isError})
+    setTimeout(()=>setMessage(null), 3000)
+  }
+
   const addName = (e) => {
     e.preventDefault()
+    console.log("addName called")
     if(persons.map(p=>p.name).includes(newName)){
       if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`))
       {
@@ -26,18 +32,24 @@ const App = () => {
       }
     }
     else{
+      console.log('adding adding')
       const newPersonObj = {name: newName, number: newNumber}
       personService
         .add(newPersonObj)
         .then(
           personObj => {
+            console.log('adding new person')
             setPersons(persons.concat(personObj))
             setNewName('')
             setNewNumber('')
-            setMessage({text: `Added ${personObj.name}`, error: false})
-            setTimeout(()=>setMessage(null), 3000)
+            showMessage(`Added ${personObj.name}`, false)
           })
-        .catch(res => console.log('Error adding person!'))
+        .catch(res => {
+          console.log(JSON.stringify(res))
+          console.log('Error adding person!')
+          showMessage(`Error updating ${newPersonObj.name}`, true)
+          // showMessage(res, true)
+        })
     }  
   }
 
@@ -50,13 +62,11 @@ const App = () => {
         setPersons(persons.map(p => p.id !== personObj.id ? p : updatedPersonObj))
         setNewName('')
         setNewNumber('')
-        setMessage({text: `Updated ${updatedPersonObj.name}'s number`, error: false})
-        setTimeout(()=>setMessage(null), 3000)
+        showMessage(`Updated ${updatedPersonObj.name}'s number`, false)
       }) 
       .catch(res => {
         console.log('Error updating person!')
-        setMessage({text: `Information of ${name} has already been removed from server`, error: true})
-        setTimeout(()=>setMessage(null), 3000)
+        showMessage(`Error updating ${name}`, true)
       })
   }
 
@@ -66,10 +76,10 @@ const App = () => {
       personService
       .remove(id)
       .then(
-        deletedPersonObj => {
-          setPersons(persons.filter(p => p.id !== deletedPersonObj.id))
-          setMessage({text: `Deleted ${deletedPerson.name}`, error: false})
-          setTimeout(()=>setMessage(null), 3000)
+        (result) => {
+          console.log(result)
+          setPersons(persons.filter(p => p.id !== deletedPerson.id))
+          showMessage(`Deleted ${deletedPerson.name}`, false)
         })
       .catch(res => console.log('Error deleting person!'))
     }
@@ -78,7 +88,7 @@ const App = () => {
   const handleNameChange = e => setNewName(e.target.value)
   const handleNumberChange = e => setNewNumber(e.target.value)
   const handleFilterChange = e => setFilter(e.target.value)
-
+  console.log('Rerendering')
   return (
     <div>
       <h2>Phonebook</h2>
