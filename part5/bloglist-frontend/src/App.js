@@ -23,15 +23,20 @@ const App = () => {
       if(user){
         console.log(user)
         setUser(user)
+        window.localStorage.setItem('user', JSON.stringify(user))
+        console.log(window.localStorage.getItem('user'))
       }
       
     }
     catch(exception){
       console.log('error handling login')
     }
-
-
-  }  
+  }
+  
+  const handleLogout = () => {
+    setUser(null)
+    window.localStorage.removeItem('user')
+  }
   if (!user){
     return (
       <div>
@@ -43,7 +48,10 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        <p>{user.name} logged in</p>
+        {user.name} logged in 
+        <button onClick={handleLogout}>logout</button>
+        <br/>
+        <br/>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
