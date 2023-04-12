@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
-const Blog = ({b, handleRemove}) => {
+const Blog = ({ b, handleRemove }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [blog, setBlog] = useState(b)
-  
+
   const toggleShow = () => setShowDetails(!showDetails)
   const handleRemoveClick = () => {
     handleRemove(blog)
@@ -30,13 +31,13 @@ const Blog = ({b, handleRemove}) => {
     // console.log(blog)
     // console.log(blog.likes)
     try{
-      const postBlog = {...blog, 
+      const postBlog = { ...blog,
         user: blog.user.id,
-        likes: blog.likes+1}
+        likes: blog.likes+1 }
       // console.log(updatedBlog)
       const result = await blogService.update(postBlog)
       if(result){
-        setBlog({...blog, likes: postBlog.likes})
+        setBlog({ ...blog, likes: postBlog.likes })
       }
       console.log(result)
     }
@@ -51,13 +52,18 @@ const Blog = ({b, handleRemove}) => {
       <button onClick={toggleShow}>{showDetails? 'hide':'view'}</button>
       <div style={showWhenVisible}>
         {blog.url} <br/>
-        likes {blog.likes} 
+        likes {blog.likes}
         <button onClick={handleLike}>like</button><br/>
         {blog.user? blog.user.name: null} <br/>
         <button onClick={handleRemoveClick} style={showDelete}>remove</button>
       </div>
-    </div>  
+    </div>
   )
+}
+
+Blog.propTypes = {
+  handleRemove: PropTypes.func.isRequired,
+  b: PropTypes.object.isRequired
 }
 
 export default Blog

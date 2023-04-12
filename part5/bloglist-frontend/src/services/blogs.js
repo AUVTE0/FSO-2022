@@ -10,7 +10,7 @@ const setToken = newToken => {
 
 const config = () => {
   return {
-    headers: {Authorization: token}
+    headers: { Authorization: token }
   }
 }
 
@@ -36,5 +36,5 @@ const remove = async (blog) => {
   const res = await axios.delete(`${baseUrl}/${blog.id}`, config())
   return res.data
 }
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken, update, remove}
+
+export default { getAll, create, setToken, update, remove }
