@@ -12,7 +12,10 @@ const getAll = async () => {
   const res = await axios.get(baseUrl)
   return res.data
 }
-
+// const getOne = async id => {
+//   const res = await axios.get(baseUrl+`/${id}`)
+//   return res.data
+// }
 const create = async blog => {
   const config = {
     headers: { Authorization: token}
@@ -22,4 +25,4 @@ const create = async blog => {
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken }
+export default { getAll, create, setToken}

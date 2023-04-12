@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 const Blog = ({blog}) => {
+  console.log(blog)
   const [visible, setVisible] = useState(false)
   const toggleVisible = () => setVisible(!visible)
   const blogStyle = {

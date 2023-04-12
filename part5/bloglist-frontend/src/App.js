@@ -70,7 +70,7 @@ const App = () => {
       const createdBlog = await blogService.create(blog)
 
       if(createdBlog){
-        setBlogs(blogs.concat(createdBlog))
+        setBlogs(await blogService.getAll())
         setMessage([`${blog.title} by ${blog.author} added!`, false])
         setTimeout(() => setMessage(null), 5000)
       }
