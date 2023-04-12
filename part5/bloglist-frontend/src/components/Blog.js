@@ -1,12 +1,14 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({b}) => {
-  console.log(b)
-  const [visible, setVisible] = useState(false)
+const Blog = ({b, handleRemove}) => {
+  const [showDetails, setShowDetails] = useState(false)
   const [blog, setBlog] = useState(b)
   
-  const toggleVisible = () => setVisible(!visible)
+  const toggleShow = () => setShowDetails(!showDetails)
+  const handleRemoveClick = () => {
+    handleRemove(blog)
+  }
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,8 +17,15 @@ const Blog = ({b}) => {
     marginBottom: 5
   }
   const showWhenVisible = {
-    display: visible? '': 'none'
+    display: showDetails? '': 'none'
   }
+  const loggedUser = JSON.parse(window.localStorage.getItem('user'))
+
+  const isByLoggedUser = loggedUser && blog.user && loggedUser.username === blog.user.username
+  const showDelete = {
+    display: isByLoggedUser? '': 'none'
+  }
+
   const handleLike = async () => {
     // console.log(blog)
     // console.log(blog.likes)
@@ -34,17 +43,18 @@ const Blog = ({b}) => {
     catch(e){
       console.log(e.message)
     }
-
   }
+
   return(
     <div style={blogStyle}>
       {blog.title} {blog.author}
-      <button onClick={toggleVisible}>{visible? 'hide':'view'}</button>
+      <button onClick={toggleShow}>{showDetails? 'hide':'view'}</button>
       <div style={showWhenVisible}>
         {blog.url} <br/>
         likes {blog.likes} 
         <button onClick={handleLike}>like</button><br/>
-        {blog.user? blog.user.name: null}
+        {blog.user? blog.user.name: null} <br/>
+        <button onClick={handleRemoveClick} style={showDelete}>remove</button>
       </div>
     </div>  
   )

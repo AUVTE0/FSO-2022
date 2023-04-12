@@ -81,7 +81,22 @@ const App = () => {
       setTimeout(() => { setMessage(null) }, 5000)
     }
     
-}
+  }
+  const handleRemove = async blog => {
+    try {
+      if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)){
+        const result = await blogService.remove(blog)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setMessage([`${blog.title} by ${blog.author} removed!`, false])
+        setTimeout(() => setMessage(null), 5000)
+      } 
+    }
+    catch(e) {
+      console.log(e.message)
+      setMessage([`Blog deletion failed with error: ${e.response.data.error}`, true])
+      setTimeout(() => { setMessage(null) }, 5000)
+    }
+  }
 
 
   if (false || !user){
@@ -105,7 +120,7 @@ const App = () => {
         <br/>
         <br/>
         {blogs.sort((a,b)=> b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} b={blog} />
+          <Blog key={blog.id} b={blog} handleRemove={handleRemove}/>
         )}
       </div>
     )
