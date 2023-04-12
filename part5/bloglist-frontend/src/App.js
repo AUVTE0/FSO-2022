@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import loginService from './services/loginService'
+import Toggable from './components/Toggable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -36,8 +37,8 @@ const App = () => {
       if(loggedUser){
         setUser(loggedUser)
         
-        window.localStorage.setItem('user', JSON.stringify(user))
-        blogService.setToken(user.token)
+        window.localStorage.setItem('user', JSON.stringify(loggedUser))
+        blogService.setToken(loggedUser.token)
       }
       
     }
@@ -95,7 +96,9 @@ const App = () => {
         <Notification message={message} isError={isError}/>
         {user.name} logged in 
         <button onClick={handleLogout}>logout</button>
-        <BlogForm handleBlogCreate={handleBlogCreate}/>
+        <Toggable showButtonText='new blog'>
+          <BlogForm handleBlogCreate={handleBlogCreate}/>
+        </Toggable>
         <br/>
         <br/>
         {blogs.map(blog =>
