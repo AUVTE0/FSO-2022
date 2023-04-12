@@ -1,25 +1,30 @@
-import {useState} from 'react'
+import {useState, forwardRef, useImperativeHandle} from 'react'
 
-const Toggable = (props) => {
+const Togglable = forwardRef((props, refs) => {
     const [visible, setVisible] = useState(false)
 
     const showWhenVisible = {display: visible? '': 'none'}
     const hideWhenVisible = {display: visible? 'none': ''}
 
-    const ToggleVisible = () => setVisible(!visible)
+    const toggleVisible = () => setVisible(!visible)
+    useImperativeHandle(refs, () => {
+        return {
+            toggleVisible
+        }
+    })
     
     return(
         <div>
             <div style={showWhenVisible}>
                 {props.children}
-                <button onClick={ToggleVisible}>cancel</button>
+                <button onClick={toggleVisible}>cancel</button>
             </div>
             <div style={hideWhenVisible}>
-                <button onClick={ToggleVisible}>{props.showButtonText}</button>
+                <button onClick={toggleVisible}>{props.showButtonText}</button>
             </div>
         </div>
 
     )
-}
+})
 
-export default Toggable
+export default Togglable
