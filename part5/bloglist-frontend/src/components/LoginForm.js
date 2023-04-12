@@ -7,7 +7,11 @@ const LoginForm = ({handleLogin}) => {
     const [password, setPassword] = useState('')
   
     return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={e => {
+        setUsername('')
+        setPassword('')
+        handleLogin(e)
+    }}>
         <div>
             <h1>log in to application</h1>
             username
