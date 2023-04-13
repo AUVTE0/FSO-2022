@@ -81,6 +81,12 @@ describe('Blog app', function() {
           url: 'www.url2.com',
           likes: 2
         })
+        cy.createBlog({
+          title: 'Blog 3',
+          author: 'User 3',
+          url: 'www.url3.com',
+          likes: 3
+        })
       })
       it('user can like a blog', function(){
         cy.contains('Blog 1').contains('view').click()
@@ -97,12 +103,13 @@ describe('Blog app', function() {
         cy.should('not.contain', 'Blog 2')
       })
 
-      it.only('can only see delete button on own blog', function(){
+      it('can only see delete button on own blog', function(){
         cy.contains('Blog 1').contains('view').click()
         cy.should('not.contain', 'remove')
       })
       it('blogs are ordered by most likes', function(){
-
+        cy.get('#blog-0').should('contain', 'Blog 3')
+        cy.get('#blog-2').should('contain', 'Blog 1')
       })
     })
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, handleRemove, handleLike }) => {
+const Blog = ({ index, blog, handleRemove, handleLike }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const toggleShow = () => setShowDetails(!showDetails)
@@ -24,7 +24,7 @@ const Blog = ({ blog, handleRemove, handleLike }) => {
   }
 
   return(
-    <div style={blogStyle} className='blog'>
+    <div style={blogStyle} id={`blog-${index}`}>
       {blog.title} {blog.author}
       <button id='toggle-view-button' onClick={toggleShow}>{showDetails? 'hide':'view'}</button>
       <div style={showWhenVisible}>

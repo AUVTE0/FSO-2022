@@ -144,7 +144,7 @@ const App = () => {
         {blogs.sort((a,b) => b.likes - a.likes).map((blog, i) =>
           <Blog
             key={i}
-            id={`blog-${i}`}
+            index={i}
             blog={blog}
             handleRemove={() => handleRemove(blog.id)}
             handleLike={() => handleLike(blog.id)}/>
