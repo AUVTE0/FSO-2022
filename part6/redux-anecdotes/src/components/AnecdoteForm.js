@@ -1,7 +1,13 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { upvote, newAnecdote } from '../reducers/anecdoteReducer'
+import { useDispatch } from 'react-redux'
+import { newAnecdote } from '../reducers/anecdoteReducer'
 
-const AnecdoteForm = ({handleAdd}) => {
+const AnecdoteForm = () => {
+    const dispatch = useDispatch()
+    const handleAdd = e => {
+        e.preventDefault()
+        const content = e.target.anecdote.value
+        dispatch(newAnecdote(content))
+    }
     return (
         <div>
             <h2>create new</h2>
