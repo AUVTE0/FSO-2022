@@ -78,8 +78,10 @@ const App = () => {
     }
 
   }
-  const handleRemove = async blog => {
+  const handleRemove = async id => {
     try {
+      console.log(id)
+      const blog = blogs.find(b => b.id === id)
       if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)){
         await blogService.remove(blog)
         setBlogs(blogs.filter(b => b.id !== blog.id))
@@ -94,6 +96,30 @@ const App = () => {
     }
   }
 
+  const handleLike = async id => {
+    // console.log(blog)
+    console.log(id)
+    try{
+      const blog = blogs.find(b => b.id === id)
+      console.log(blog)
+      const postBlog = { ...blog,
+        user: blog.user.id,
+        likes: blog.likes+1 }
+
+      const result = await blogService.update(postBlog)
+
+      if(result)
+      {
+        const updatedBlog = { ...blog,
+          likes: blog.likes+1 }
+        setBlogs(blogs.map(b => b.id !== blog.id? b: updatedBlog))
+      }
+      console.log(result)
+    }
+    catch(e){
+      console.log(e.message)
+    }
+  }
 
   if (false || !user){
     return (
@@ -116,7 +142,11 @@ const App = () => {
         <br/>
         <br/>
         {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} b={blog} handleRemove={handleRemove}/>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            handleRemove={() => handleRemove(blog.id)}
+            handleLike={() => handleLike(blog.id)}/>
         )}
       </div>
     )
