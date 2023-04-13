@@ -5,19 +5,19 @@ import BlogForm from './BlogForm'
 
 describe('Test blog form component', () => {
 
-    const handleBlogCreate = jest.fn(e => e.preventDefault())
-    beforeEach(async () => {
-        await render(<BlogForm handleBlogCreate={handleBlogCreate} />)
-    })
-    
+  const handleBlogCreate = jest.fn(e => e.preventDefault())
+  beforeEach(async () => {
+    await render(<BlogForm handleBlogCreate={handleBlogCreate} />)
+  })
 
 
-    test('calls event handler when submit button clicked', async () => {
 
-        const submitButton = screen.getByText('create')
-        fireEvent.submit(submitButton)
+  test('calls event handler when submit button clicked', async () => {
 
-        expect(handleBlogCreate.mock.calls).toHaveLength(1)
-    })
+    const submitButton = screen.getByText('create')
+    fireEvent.submit(submitButton)
+
+    expect(handleBlogCreate.mock.calls).toHaveLength(1)
+  })
 
 })
