@@ -14,7 +14,6 @@ const App = () => {
     const content = e.target.anecdote.value
     dispatch(newAnecdote(content))
   }
-
   return (
     <div>
       <h2>Anecdotes</h2>
