@@ -26,13 +26,13 @@ const Blog = ({ blog, handleRemove, handleLike }) => {
   return(
     <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}
-      <button onClick={toggleShow}>{showDetails? 'hide':'view'}</button>
+      <button id='toggle-view-button' onClick={toggleShow}>{showDetails? 'hide':'view'}</button>
       <div style={showWhenVisible}>
         {blog.url} <br/>
         likes {blog.likes}
-        <button onClick={handleLike}>like</button><br/>
+        <button id='like-button' onClick={handleLike}>like</button><br/>
         {blog.user? blog.user.name: null} <br/>
-        <button onClick={handleRemove} style={showDelete}>remove</button>
+        <button id='remove-button' onClick={handleRemove} style={showDelete}>remove</button>
       </div>
     </div>
   )
