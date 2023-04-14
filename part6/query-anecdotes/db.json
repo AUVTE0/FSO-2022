@@ -8,27 +8,27 @@
     {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "21149",
-      "votes": 0
+      "votes": 3
     },
     {
       "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
       "id": "69581",
-      "votes": 0
+      "votes": 1
     },
     {
       "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
       "id": "36975",
-      "votes": 1
+      "votes": 3
     },
     {
       "content": "Premature optimization is the root of all evil.",
       "id": "25170",
-      "votes": 0
+      "votes": 1
     },
     {
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
       "id": "98312",
-      "votes": 2
+      "votes": 4
     },
     {
       "content": "Creating a new anecdote should work perfectly because I am optimistic.",
@@ -43,6 +43,36 @@
     {
       "content": "Seems to be working okay",
       "id": "77298",
+      "votes": 0
+    },
+    {
+      "content": "creating another new note to test dispatch",
+      "id": "93643",
+      "votes": 0
+    },
+    {
+      "content": "testk g",
+      "id": "1920",
+      "votes": 0
+    },
+    {
+      "content": "how about now",
+      "id": "4108",
+      "votes": 0
+    },
+    {
+      "content": "Creating a new anecdote should work perfectly because I am optimistic.",
+      "id": "51470",
+      "votes": 0
+    },
+    {
+      "content": "testing again",
+      "id": "51045",
+      "votes": 0
+    },
+    {
+      "content": "testing testing",
+      "id": "69319",
       "votes": 0
     }
   ]
