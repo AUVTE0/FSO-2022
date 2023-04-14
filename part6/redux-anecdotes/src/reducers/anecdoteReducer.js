@@ -19,8 +19,6 @@ const anecdoteSlice = createSlice({
   initialState: [],
   reducers: {
     appendAnecdote(state, action) {
-      console.log(state.concat(action.payload))
-      // return state
       return state.concat((action.payload))
     },
     upvote(state, action) {
