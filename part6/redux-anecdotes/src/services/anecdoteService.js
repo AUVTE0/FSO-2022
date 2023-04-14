@@ -6,6 +6,7 @@ const getId = () => (100000 * Math.random()).toFixed(0)
 
 const getAll = async () => {
     const res = await axios.get(baseUrl)
+    console.log(res.data)
     return res.data
 }
 
