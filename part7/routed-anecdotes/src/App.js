@@ -60,9 +60,9 @@ const CreateNew = (props) => {
 
   const navigate = useNavigate()
   
-  const contentField = useField('content')
-  const authorField = useField('text')
-  const infoField = useField('text')
+  const {reset: resetContent, ...contentField} = useField('content')
+  const {reset: resetAuthor, ...authorField} = useField('author')
+  const {reset: resetInfo, ...infoField} = useField('info')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -79,9 +79,9 @@ const CreateNew = (props) => {
 
   const handleReset = (e) => {
     e.preventDefault()
-    contentField.reset()
-    authorField.reset()
-    infoField.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
