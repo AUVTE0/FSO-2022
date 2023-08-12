@@ -1,0 +1,17 @@
+.noti {
+    color: green;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .error {
+    color: red;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
