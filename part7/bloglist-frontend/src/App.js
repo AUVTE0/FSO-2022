@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useReducer, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
@@ -6,55 +6,101 @@ import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import loginService from './services/loginService'
 import Togglable from './components/Togglable'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { userReducer, UserContextProvider } from './UserContext'
+
+const notificationReducer = (message, action) => {
+  switch(action.type){
+  case 'set':
+    return action.payload? action.payload: null
+  case 'unset':
+    return null
+  default:
+    return message
+  }
+}
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [message, setMessage] = useState(null)
+  const queryClient = useQueryClient()
+  const [message, messageDispatch] = useReducer(notificationReducer, null)
+  const [user, userDispatch] = useReducer(userReducer, JSON.parse(window.localStorage.getItem('user')))
+  blogService.setToken(user.token)
 
+  // queries
+  const { data: blogs, isLoading } = useQuery('blogs', blogService.getAll)
   const blogFormRef = useRef()
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+  const notify = ([message, isError]) => {
+    messageDispatch({ type: 'set', payload: [ message, isError] })
+    setTimeout(() => { messageDispatch({ type: 'unset' }) }, 5000)
+  }
 
-  useEffect(() => {
-    const loggedUser = JSON.parse(window.localStorage.getItem('user'))
-    if (loggedUser) {
-      setUser(loggedUser)
-      console.log(loggedUser.token)
-      blogService.setToken(loggedUser.token)
+  // mutations
+  const createBlog = useMutation(blogService.create, {
+    onSuccess: (blog) => {
+      queryClient.invalidateQueries('blogs')
+      notify([`${blog.title} by ${blog.author} added!`, false])
+    },
+    onError: (e) => {
+      notify([
+        `Blog creation failed with error: ${e.response.data.error}`,
+        true,
+      ])
     }
-  }, [])
+  })
+
+  const deleteBlog = useMutation(blogService.remove, {
+    onSuccess: (blog) => {
+      queryClient.invalidateQueries('blogs')
+      console.log('removed blog')
+      console.log(blog)
+      notify([`${blog.title} by ${blog.author} removed!`, false])
+    },
+    onError: (e) => {
+      console.log(e.message)
+      notify([
+        `Blog deletion failed with error: ${e.response.data.error}`,
+        true,
+      ])
+    }
+  })
+
+  const updateBlog = useMutation(blogService.update, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    },
+    onError: (e) => {
+      console.log(e.message)
+    }
+  })
+
+  if(isLoading){
+    return(<div>loading...</div>)
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
+    const username = e.target.Username.value
+    const password = e.target.Password.value
     try {
-      const username = e.target.Username.value
-      const password = e.target.Password.value
       const loggedUser = await loginService.login({ username, password })
-      if (loggedUser) {
-        setUser(loggedUser)
-        window.localStorage.setItem('user', JSON.stringify(loggedUser))
-        blogService.setToken(loggedUser.token)
-      }
-    } catch (e) {
-      console.log(e)
-      setMessage([
-        `incorrect username or password: ${e.response.data.error}`,
+      userDispatch({ type: 'set', payload: loggedUser })
+      blogService.setToken(user.token)
+    }
+    catch(e) {
+      console.log(e.message)
+      notify([
+        'incorrect username or password',
         true,
       ])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
     }
   }
 
   const handleLogout = () => {
-    setUser(null)
+    userDispatch({ type: 'logout' })
     blogService.setToken(null)
-    window.localStorage.removeItem('user')
   }
+
   const handleBlogCreate = async (e) => {
     e.preventDefault()
     blogFormRef.current.toggleVisible()
@@ -64,67 +110,26 @@ const App = () => {
       author: e.target.author.value,
       url: e.target.url.value,
     }
-    try {
-      const createdBlog = await blogService.create(blog)
-
-      if (createdBlog) {
-        setBlogs(await blogService.getAll())
-        setMessage([`${blog.title} by ${blog.author} added!`, false])
-        setTimeout(() => setMessage(null), 5000)
-      }
-    } catch (e) {
-      console.log(e)
-      setMessage([
-        `Blog creation failed with error: ${e.response.data.error}`,
-        true,
-      ])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
+    createBlog.mutate(blog)
   }
+
   const handleRemove = async (id) => {
-    try {
-      console.log(id)
-      const blog = blogs.find((b) => b.id === id)
-      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-        await blogService.remove(blog)
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
-        setMessage([`${blog.title} by ${blog.author} removed!`, false])
-        setTimeout(() => setMessage(null), 5000)
-      }
-    } catch (e) {
-      console.log(e.message)
-      setMessage([
-        `Blog deletion failed with error: ${e.response.data.error}`,
-        true,
-      ])
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+    console.log(id)
+    const blog = blogs.find((b) => b.id === id)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      deleteBlog.mutate(blog)
     }
   }
 
   const handleLike = async (id) => {
-    // console.log(blog)
     console.log(id)
-    try {
-      const blog = blogs.find((b) => b.id === id)
-      console.log(blog)
-      const postBlog = { ...blog, user: blog.user.id, likes: blog.likes + 1 }
-
-      const result = await blogService.update(postBlog)
-
-      if (result) {
-        const updatedBlog = { ...blog, likes: blog.likes + 1 }
-        setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)))
-      }
-      console.log(result)
-    } catch (e) {
-      console.log(e.message)
-    }
+    const blog = blogs.find((b) => b.id === id)
+    const postBlog = { ...blog, user: blog.user.id, likes: blog.likes + 1 }
+    updateBlog.mutate(postBlog)
   }
 
+  console.log('user is')
+  console.log(user)
   if (false || !user) {
     return (
       <div>
@@ -134,28 +139,30 @@ const App = () => {
     )
   } else {
     return (
-      <div>
-        <h1>blogs</h1>
-        <Notification message={message} />
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-        <Togglable showButtonText="new blog" ref={blogFormRef}>
-          <BlogForm handleBlogCreate={handleBlogCreate} />
-        </Togglable>
-        <br />
-        <br />
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog, i) => (
-            <Blog
-              key={i}
-              index={i}
-              blog={blog}
-              handleRemove={() => handleRemove(blog.id)}
-              handleLike={() => handleLike(blog.id)}
-            />
-          ))}
-      </div>
+      <UserContextProvider>
+        <div>
+          <h1>blogs</h1>
+          <Notification message={message} />
+          {user.name} logged in
+          <button onClick={handleLogout}>logout</button>
+          <Togglable showButtonText="new blog" ref={blogFormRef}>
+            <BlogForm handleBlogCreate={handleBlogCreate} />
+          </Togglable>
+          <br />
+          <br />
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog, i) => (
+              <Blog
+                key={i}
+                index={i}
+                blog={blog}
+                handleRemove={() => handleRemove(blog.id)}
+                handleLike={() => handleLike(blog.id)}
+              />
+            ))}
+        </div>
+      </UserContextProvider>
     )
   }
 }

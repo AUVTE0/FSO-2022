@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useUserValue } from '../UserContext'
 
 const Blog = ({ index, blog, handleRemove, handleLike }) => {
   const [showDetails, setShowDetails] = useState(false)
+  const loggedUser = useUserValue()
 
   const toggleShow = () => setShowDetails(!showDetails)
 
@@ -16,7 +18,6 @@ const Blog = ({ index, blog, handleRemove, handleLike }) => {
   const showWhenVisible = {
     display: showDetails? '': 'none'
   }
-  const loggedUser = JSON.parse(window.localStorage.getItem('user'))
 
   const isByLoggedUser = loggedUser && blog.user && loggedUser.username === blog.user.username
   const showDelete = {

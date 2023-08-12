@@ -24,6 +24,7 @@ const getAll = async () => {
 //   return res.data
 // }
 const create = async blog => {
+  console.log(config())
   const res = await axios.post(baseUrl, blog, config())
   return res.data
 }
@@ -34,8 +35,8 @@ const update = async (blog) => {
 }
 
 const remove = async (blog) => {
-  const res = await axios.delete(`${baseUrl}/${blog.id}`, config())
-  return res.data
+  await axios.delete(`${baseUrl}/${blog.id}`, config())
+  return blog
 }
 
 export default { getAll, create, setToken, update, remove }
