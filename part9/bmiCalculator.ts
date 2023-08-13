@@ -35,4 +35,34 @@ const calculateBmi = (height: number, weight: number) => {
     }
 }
 
-console.log(calculateBmi(180, 74))
+const parseArgsBmi = (args: string[]): [number, number] => {
+    if (args.length !== 2){
+        throw new Error('Exactly 2 arguments required')
+    }
+    
+    let result:number[] = [];
+    args.forEach(arg => {
+        try {
+            result.push(Number(arg))
+        }
+        catch (error: unknown){
+            throw new Error(`Error: ${arg} is not a number`)
+        }
+    })
+    return [result[0], result[1]];
+}
+
+// console.log(calculateBmi(180, 74))
+
+try {
+    const args = process.argv;
+    const inputs = parseArgsBmi(args.slice(2, args.length));
+    console.log(calculateBmi(...inputs));
+}
+catch (error: unknown){
+    let message = 'Error: ';
+    if (error instanceof Error){
+        message += error.message;
+    }
+    console.log(message);
+}
