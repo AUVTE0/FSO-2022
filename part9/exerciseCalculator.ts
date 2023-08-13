@@ -32,10 +32,11 @@ const calculateExercises = (record: number[], originalTarget: number): results =
             message += error.message;
         }
         console.log(message)
+        throw new Error(message);
     }
 }
 
-const parseArgs = (args: string[]): [number[], number] => {
+export const parseArgs = (args: string[]): [number[], number] => {
     if (args.length < 2){
         throw new Error('Minimum 2 arguments required')
     }
@@ -54,15 +55,17 @@ const parseArgs = (args: string[]): [number[], number] => {
 
 // console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 
-try {
-    const args = process.argv;
-    const inputs = parseArgs(args.slice(2, args.length));
-    console.log(calculateExercises(...inputs));
-}
-catch (error: unknown){
-    let message = 'Error: ';
-    if (error instanceof Error){
-        message += error.message;
-    }
-    console.log(message);
-}
+// try {
+//     const args = process.argv;
+//     const inputs = parseArgs(args.slice(2, args.length));
+//     console.log(calculateExercises(...inputs));
+// }
+// catch (error: unknown){
+//     let message = 'Error: ';
+//     if (error instanceof Error){
+//         message += error.message;
+//     }
+//     console.log(message);
+// }
+
+export default calculateExercises;
