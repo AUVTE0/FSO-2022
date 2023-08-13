@@ -15,6 +15,12 @@ export interface Patient {
     occupation: string;
 }
 
+export enum Gender {
+    Male = 'male',
+    Female = 'female',
+    Other = 'other',
+}
+
 export type NonSensitivePatient = Omit<Patient, 'ssn'>;
 
 export type NewPatient = Omit<Patient, 'id'>;
@@ -23,9 +29,20 @@ const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
 };
 
+const isGender = (text: string): text is Gender => {
+    return Object.values(Gender).map(v => v.toString()).includes(text);
+};
+
 const parseStringField = (field: unknown, name: string): string => {
     if (!isString(field) || field.length < 1){
         throw new Error(`Incorrect type or missing data for field ${name}`);
+    }
+    return field;
+};
+
+const parseGenderField = (field: unknown): Gender => {
+    if(!isString(field) || !isGender(field)){
+        throw new Error('Incorrect type or missing data for gender field');
     }
     return field;
 };
@@ -44,7 +61,7 @@ export const toPatient = (object: unknown): Patient => {
             name: parseStringField(object.name, 'name'),
             dateOfBirth: parseStringField(object.dateOfBirth, 'dateOfBirth'),
             ssn: parseStringField(object.ssn, 'ssn'),
-            gender: parseStringField(object.gender, 'gender'),
+            gender: parseGenderField(object.gender),
             occupation: parseStringField(object.occupation, 'occupation')
         };
 
