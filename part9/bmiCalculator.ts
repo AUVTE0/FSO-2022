@@ -1,6 +1,7 @@
 const calculateBmi = (height: number, weight: number) => {
     try {
-        const BMI = weight/(height/100)**2;  
+        const BMI = weight/(height/100)**2;
+        console.log(BMI);  
         if (BMI < 16){
             return 'Underweight (Severe thinness)';
         }
@@ -32,10 +33,11 @@ const calculateBmi = (height: number, weight: number) => {
             errorMessage += error.message;
         }
         console.log(errorMessage)
+        return errorMessage;
     }
 }
 
-const parseArgsBmi = (args: string[]): [number, number] => {
+export const parseArgsBmi = (args: string[]): [number, number] => {
     if (args.length !== 2){
         throw new Error('Exactly 2 arguments required')
     }
@@ -54,15 +56,17 @@ const parseArgsBmi = (args: string[]): [number, number] => {
 
 // console.log(calculateBmi(180, 74))
 
-try {
-    const args = process.argv;
-    const inputs = parseArgsBmi(args.slice(2, args.length));
-    console.log(calculateBmi(...inputs));
-}
-catch (error: unknown){
-    let message = 'Error: ';
-    if (error instanceof Error){
-        message += error.message;
-    }
-    console.log(message);
-}
+// try {
+//     const args = process.argv;
+//     const inputs = parseArgsBmi(args.slice(2, args.length));
+//     console.log(calculateBmi(...inputs));
+// }
+// catch (error: unknown){
+//     let message = 'Error: ';
+//     if (error instanceof Error){
+//         message += error.message;
+//     }
+//     console.log(message);
+// }
+
+export default calculateBmi;
