@@ -12,11 +12,7 @@ const EntryForm = ({ handleEntryCreate }:{ handleEntryCreate: (e: SyntheticEvent
     <div>
       <h1>Add new entry</h1>
       <form onSubmit = {async e => {
-        await handleEntryCreate(e)
-        setDate('')
-        setVisibility('')
-        setWeather('')
-        setComment('')
+        handleEntryCreate(e)
       }}>
         <TextInput name={'date'} value={date} onChange={setDate}/>
         <TextInput name={'visibility'} value={visibility} onChange={setVisibility}/>
