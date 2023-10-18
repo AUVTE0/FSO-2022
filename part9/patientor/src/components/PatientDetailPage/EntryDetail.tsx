@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react";
-import { Entry, Diagnosis } from "../../types";
-import diagnosisService from "../../services/diagnoses";
+import { Entry } from "../../types";
+import HealthCheckEntryDetail from "./HealthCheckEntryDetail";
+import HospitalEntryDetail from "./HospitalEntryDetail";
+import OccupationalEntryDetail from "./OccupationalEntryDetail";
 
-
-const EntryDetail = ({entry}: {entry: Entry}) => {
-    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
-    useEffect(() => {
-        const fetchDiagnoses = async () => {
-          const diagnoses = await diagnosisService.getAll();
-          setDiagnoses(diagnoses);
-        };
-        void fetchDiagnoses();
-      }, []);
-
-    const diagnosisName = (code: string) => (
-        diagnoses?.find(item => item.code === code)?.name
-    );
-      
-    return (
-        <div>
-            {entry.date}
-            <i> {entry.description}</i>
-            <ul>
-                {entry.diagnosisCodes?.map(code => <li>{code} {diagnosisName(code)}</li>)}
-            </ul>
-        </div>
+/**
+ * Helper function for exhaustive type checking
+ */
+const assertNever = (value: never): never => {
+    throw new Error(
+      `Unhandled entry type: ${JSON.stringify(value)}`
     );
 };
 
+const EntryDetail = ({entry}: {entry: Entry}) => {
+    switch(entry.type){
+        case "HealthCheck":
+            return <HealthCheckEntryDetail entry={entry} />;
+        case "Hospital":
+            return <HospitalEntryDetail entry={entry} />;
+        case "OccupationalHealthcare":
+            return <OccupationalEntryDetail entry={entry} />;
+        default:
+            assertNever(entry);
+            return null;
+    }
+
+};
 
 export default EntryDetail;
