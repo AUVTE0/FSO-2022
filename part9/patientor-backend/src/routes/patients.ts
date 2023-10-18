@@ -8,10 +8,19 @@ const router = express.Router();
 router.get('/', (_req, res) => {
   const patientData: NonSensitivePatient[] = data.map(patient => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { ssn, ...nonSensitiveFields } = patient;
+    const { ssn, entries, ...nonSensitiveFields } = patient;
     return nonSensitiveFields;
   });
   res.send(patientData);
+});
+
+router.get('/:id',(_req, res) => {
+  const patientData = data.find(patient => patient.id === _req.params['id']);
+
+  if(patientData){
+    res.send(patientData);
+  }
+  res.status(400).send('Not found');
 });
 
 router.post('/', (req, res) => {
