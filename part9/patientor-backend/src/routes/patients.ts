@@ -20,7 +20,9 @@ router.get('/:id',(_req, res) => {
   if(patientData){
     res.send(patientData);
   }
-  res.status(400).send('Not found');
+  else{
+    res.status(400).send('Not found');
+  }
 });
 
 router.post('/', (req, res) => {
@@ -35,7 +37,9 @@ router.post('/', (req, res) => {
     if (error instanceof Error) {
       errorMessage += error.message;
     }
-    res.status(400).send(errorMessage);
+    else{
+      res.status(400).send(errorMessage);
+    }
   }
 });
 
