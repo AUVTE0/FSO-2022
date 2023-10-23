@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import {  HospitalEntry } from "../../types";
+import {  HospitalEntry } from "../../../types";
 import DetailCard from "./DetailCard";
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 

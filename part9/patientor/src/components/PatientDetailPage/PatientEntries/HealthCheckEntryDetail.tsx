@@ -1,6 +1,6 @@
-import {  HealthCheckEntry } from "../../types";
-import useDiagnoses from "../../hooks/useDiagnoses";
-import HealthRatingBar from '../HealthRatingBar';
+import {  HealthCheckEntry } from "../../../types";
+import useDiagnoses from "../../../hooks/useDiagnoses";
+import HealthRatingBar from '../../HealthRatingBar';
 import DetailCard from "./DetailCard";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 
@@ -15,7 +15,7 @@ const HealthCheckEntryDetail = ({entry}: {entry: HealthCheckEntry}) => {
         <div>
             <HealthRatingBar rating={entry.healthCheckRating} showText={false}/>
             <ul>
-                {entry.diagnosisCodes?.map(code => <li>{code} {diagnosisName(code)}</li>)}
+                {entry.diagnosisCodes?.map(code => <li key={code}>{code} {diagnosisName(code)}</li>)}
             </ul>
         </div>
     );

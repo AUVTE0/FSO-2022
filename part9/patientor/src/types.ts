@@ -65,3 +65,18 @@ export type Entry =
 | HealthCheckEntry;
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+interface BaseEntryFormValues {
+  type: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes: string;
+}
+
+export interface HealthCheckEntryFormValues extends BaseEntryFormValues {
+  healthCheckRating: string;
+}
+
+export type EntryFormValues = 
+| HealthCheckEntryFormValues;

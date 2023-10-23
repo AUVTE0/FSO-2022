@@ -1,5 +1,5 @@
-import { OccupationalHealthcareEntry } from "../../types";
-import useDiagnoses from "../../hooks/useDiagnoses";
+import { OccupationalHealthcareEntry } from "../../../types";
+import useDiagnoses from "../../../hooks/useDiagnoses";
 import DetailCard from "./DetailCard";
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import { Typography } from "@mui/material";
@@ -17,14 +17,13 @@ const OccupationalEntryDetail = ({entry}: {entry: OccupationalHealthcareEntry}) 
                 entry.sickLeave && (
                     <Typography variant="body2">
                         <br/>
-                        Sick leave from <b>{entry.sickLeave?.startDate}</b> 
-                        to <b>{entry.sickLeave?.endDate}</b>
+                        Sick leave from <b>{entry.sickLeave?.startDate}</b> to <b>{entry.sickLeave?.endDate}</b>
                     </Typography>
                 )
             }
 
             <ul>
-                {entry.diagnosisCodes?.map(code => <li>{code} {diagnosisName(code)}</li>)}
+                {entry.diagnosisCodes?.map(code => <li key={code}>{code} {diagnosisName(code)}</li>)}
             </ul>
         </div>
     );
