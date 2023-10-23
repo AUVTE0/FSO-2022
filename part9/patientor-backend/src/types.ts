@@ -28,7 +28,6 @@ interface HealthCheckEntry extends BaseEntry {
 
 interface HospitalEntry extends BaseEntry {
     type: "Hospital";
-    specialist: string;
     discharge: {
         date: string,
         criteria: string
@@ -38,7 +37,6 @@ interface HospitalEntry extends BaseEntry {
 interface OccupationalHealthcareEntry extends BaseEntry {
     type: "OccupationalHealthcare";
     employerName?: string;
-    specialist: string;
     sickLeave?: {
         startDate: string,
         endDate: string
@@ -74,6 +72,10 @@ const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
 };
 
+const isNumber = (text: unknown): text is number => {
+    return typeof text === 'number' || text instanceof Number;
+};
+
 const isGender = (text: string): text is Gender => {
     return Object.values(Gender).map(v => v.toString()).includes(text);
 };
@@ -92,39 +94,133 @@ const parseGenderField = (field: unknown): Gender => {
     return field;
 };
 
-const parseEntry = (object: unknown): Entry | undefined => {
+const isRating = (number: number|string): number is HealthCheckRating => {
+    if(isString(number)){
+        number = parseInt(number);
+    }
+    return Object.values(HealthCheckRating).includes(number);
+};
+
+const parseRatingField = (field: unknown): HealthCheckRating => {
+    if( (!isNumber(field) && !isString(field)) || !isRating(field)){
+        throw new Error('Incorrect type or missing data for rating field');
+    }
+    return field;
+};
+
+const parseDiagnosisCodes = (field: unknown): Array<Diagnosis['code']> =>  {
+    
+    if ((!isString(field) && typeof field !== 'object')) {
+      // we will just trust the data to be in correct form
+      return [] as Array<Diagnosis['code']>;
+    }
+    if(isString(field)){
+        return field.split(', ');
+    }
+    return field as Array<Diagnosis['code']>;
+  };
+
+const toHealthCheckEntry = (object: object, entry: Entry): HealthCheckEntry => {
+    if('healthCheckRating' in object){
+        return {
+            ...entry,
+            healthCheckRating: parseRatingField(object.healthCheckRating)
+        } as HealthCheckEntry;
+    }
+    throw new Error('Missing fields in health check entry');
+};
+
+const toHospitalEntry = (object: object, entry: Entry): HospitalEntry => {
+    if( 'discharge' in object &&
+        typeof object.discharge === 'object' &&
+        object.discharge &&
+        'date' in object.discharge &&
+        'criteria' in object.discharge){
+        return {
+            ...entry,
+            discharge: {
+                date: parseStringField(object.discharge.date, 'discharge.date'),
+                criteria: parseStringField(object.discharge.date, 'discharge.criteria')
+            }
+        } as HospitalEntry;
+    }
+    throw new Error('Missing fields in hospital entry');
+};
+
+const toOccupationalHealthcareEntry = (object: object, entry: Entry): OccupationalHealthcareEntry => {
+    let ohcEntry = { ...entry } as OccupationalHealthcareEntry;
+    if('employerName' in object) {
+        ohcEntry = {
+            ...ohcEntry,
+            employerName: parseStringField(object.employerName, 'employerName')
+        };
+    }
+    if( 'sickLeave' in object &&
+        typeof object.sickLeave === 'object' &&
+        object.sickLeave &&
+        'startDate' in object.sickLeave &&
+        'endDate' in object.sickLeave){
+        ohcEntry = {
+            ...ohcEntry,
+            sickLeave: {
+                startDate: parseStringField(object.sickLeave.startDate, 'sickLeave.startDate'),
+                endDate: parseStringField(object.sickLeave.endDate, 'sickLeave.endDate')
+            }
+        };
+    }
+    return ohcEntry;
+};
+
+
+export const toEntry = (object: unknown): Entry => {
     if (!object || typeof object !== 'object') {
         throw new Error('Incorrect or missing type of entry data');
     }
-    if('type' in object){
+    if ('type' in object &&
+    'description' in object && 
+    'date' in object && 
+    'specialist' in object ){
         try {
+            let entry = {
+                id: 'id' in object? parseStringField(object.id, 'id'): uuidv4(),
+                description: parseStringField(object.description, 'name'),
+                date: parseStringField(object.date, 'dateOfBirth'),
+                specialist: parseStringField(object.specialist, 'ssn'),
+                type: parseStringField(object.type, 'type'),
+            } as Entry;
+            if('diagnosisCodes' in object){
+                entry = {
+                    ...entry,
+                    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes)
+                };
+            }
             switch(object.type){
                 case "Hospital":
-                    return object as HospitalEntry;
+                    return toHospitalEntry(object, entry);
                 case "HealthCheck":
-                    return object as HealthCheckEntry;
+                    return toHealthCheckEntry(object, entry);
                 case "OccupationalHealthcare":
-                    return object as OccupationalHealthcareEntry;
+                    return toOccupationalHealthcareEntry(object, entry);
                 default:
                     throw new Error('Unrecognised entry type');
             }
         }
         catch(e){
             if(e instanceof Error){
-                throw new Error('Error parsing entry' + e.message);
+                throw new Error('Error parsing entry: ' + e.message);
             }
         }
     }
-    return;
+    throw new Error('Missing basic fields in entry');
 };
 
-const parseEntries = (object: unknown): Entry[] => {
+const toEntries = (object: unknown): Entry[] => {
     if (!(object && object instanceof Array)){
         throw new Error('Incorrect or missing type of entries data');
     }
     const entries = Array<Entry>();
     object.forEach((obj: unknown) => {
-        const entry = parseEntry(obj);
+        const entry = toEntry(obj);
         if(entry){
             entries.push(entry);
         }
@@ -149,7 +245,7 @@ export const toPatient = (object: unknown): Patient => {
             ssn: parseStringField(object.ssn, 'ssn'),
             gender: parseGenderField(object.gender),
             occupation: parseStringField(object.occupation, 'occupation'),
-            entries: parseEntries(object.entries)
+            entries: toEntries(object.entries)
         };
 
         return patient;

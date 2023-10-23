@@ -1,7 +1,7 @@
 import express from 'express';
 import data from '../../data/patients';
-import { NonSensitivePatient, Patient, toPatient } from '../types';
-import { addPatient } from '../services/patientService';
+import { NonSensitivePatient, Patient, toEntry, toPatient } from '../types';
+import { addPatient, addEntry } from '../services/patientService';
 
 const router = express.Router();
 
@@ -33,13 +33,36 @@ router.post('/', (req, res) => {
     res.json(addedPatient);
   }
   catch (error: unknown) {
-    let errorMessage = 'Error: ';
+    let errorMessage = '';
     if (error instanceof Error) {
       errorMessage += error.message;
     }
-    else{
-      res.status(400).send(errorMessage);
+    res.status(400).send(errorMessage);
+  }
+});
+
+router.post('/:id', (req, res) => {
+  try {
+    console.log(req.body);
+    const patientId = req.params['id'];
+    const patientData = data.find(patient => patient.id === patientId); 
+    if(!req.body){
+      res.status(400).send('No entry data sent');
     }
+    if(!patientData){
+      res.status(400).send('Patient not found');
+    }
+    
+    const newEntry= toEntry(req.body);
+    const addedEntry = addEntry(newEntry, patientData as Patient);
+    res.json(addedEntry);
+  }
+  catch (error: unknown) {
+    let errorMessage = '';
+    if (error instanceof Error) {
+      errorMessage += error.message;
+    }
+    res.status(400).send(errorMessage);
   }
 });
 
