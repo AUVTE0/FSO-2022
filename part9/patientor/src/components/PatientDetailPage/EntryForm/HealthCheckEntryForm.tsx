@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { EntryFormValues, HealthCheckEntryFormValues } from "../../../types";
-import { BasicFields, TextInput } from "./EntryForm";
+import { BasicFields } from "./EntryForm";
 import { Button } from "@mui/material";
-
+import { TextInput, today } from "./InputFields";
 
 const HealthCheckEntryForm = ({handleSubmit}: {handleSubmit: (values: EntryFormValues) => Promise<void>;}) => {
     const [values, setValues] = useState<HealthCheckEntryFormValues>({
         type: 'HealthCheck',
         description: '',
-        date: '',
+        date: today(),
         specialist: '',
-        diagnosisCodes: '',
+        diagnosisCodes: [],
         healthCheckRating: ''
     });
     const addEntry = ( e: React.FormEvent ) => {

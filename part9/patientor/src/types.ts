@@ -1,3 +1,5 @@
+// import { Dayjs } from "dayjs";
+
 export interface Diagnosis {
   code: string;
   name: string;
@@ -74,7 +76,7 @@ export interface BaseEntryFormValues {
   description: string;
   date: string;
   specialist: string;
-  diagnosisCodes: string;
+  diagnosisCodes: string[];
 }
 
 export interface HealthCheckEntryFormValues extends BaseEntryFormValues {

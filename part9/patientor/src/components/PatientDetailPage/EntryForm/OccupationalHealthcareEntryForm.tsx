@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { EntryFormValues, OccupationalHealthcareEntryFormValues } from "../../../types";
-import { BasicFields, TextInput } from "./EntryForm";
+import { BasicFields } from "./EntryForm";
 import { Button, Stack } from "@mui/material";
-
+import { DateInput, TextInput, today } from "./InputFields";
 
 const HospitalEntryForm = ({handleSubmit}: {handleSubmit: (values: EntryFormValues) => Promise<void>;}) => {
     const sickLeaveInit = {
-        startDate: '',
-        endDate: ''
+        startDate: today(),
+        endDate: today(),
     };
     
     const [values, setValues] = useState<OccupationalHealthcareEntryFormValues>({
         type: 'OccupationalHealthcare',
         description: '',
-        date: '',
+        date: today(),
         specialist: '',
-        diagnosisCodes: '',
+        diagnosisCodes: [],
         employerName: '',
         sickLeave: sickLeaveInit,
     });
@@ -33,17 +33,15 @@ const HospitalEntryForm = ({handleSubmit}: {handleSubmit: (values: EntryFormValu
                 onChange={e => setValues({...values, employerName: e.target.value})}
             />
             <Stack spacing={2} direction="row" sx={{marginBottom: 2}}>
-                <TextInput
-                    id="sickLeaveStart"
+                <DateInput
                     label="Sick Leave Start Date"
-                    value={values.sickLeave?.startDate}
-                    onChange={e => setValues({...values, sickLeave: {...values.sickLeave, startDate: e.target.value}})}
+                    value={values.sickLeave?.startDate ?? new Date().toString()}
+                    onChange={value => setValues({...values, sickLeave: {...values.sickLeave, startDate: value ?? today()}})}
                 />
-                <TextInput
-                    id="sickLeaveEnd"
+                <DateInput
                     label="Sick Leave End Date"
-                    value={values.sickLeave?.endDate}
-                    onChange={e => setValues({...values, sickLeave: {...values.sickLeave, endDate: e.target.value}})}
+                    value={values.sickLeave?.endDate ?? new Date().toString()}
+                    onChange={value => setValues({...values, sickLeave: {...values.sickLeave, endDate: value ?? today()}})}
                 />
             </Stack>
             <Button type="submit">Submit</Button>
