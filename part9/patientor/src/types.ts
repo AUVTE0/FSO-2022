@@ -42,7 +42,6 @@ export interface HealthCheckEntry extends BaseEntry {
 
 export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
-  specialist: string;
   discharge: {
       date: string,
       criteria: string
@@ -52,7 +51,6 @@ export interface HospitalEntry extends BaseEntry {
 export interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName?: string;
-  specialist: string;
   sickLeave?: {
       startDate: string,
       endDate: string
@@ -66,8 +64,13 @@ export type Entry =
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-interface BaseEntryFormValues {
-  type: string;
+export const EntryOpts = ['Hospital', 'HealthCheck', 'OccupationalHealthcare'];
+export type EntryType = typeof EntryOpts[number]; 
+
+// export type EntryType = 'Hospital'|'HealthCheck'|'OccupationalHealthcare';
+
+export interface BaseEntryFormValues {
+  type: EntryType;
   description: string;
   date: string;
   specialist: string;
@@ -75,8 +78,25 @@ interface BaseEntryFormValues {
 }
 
 export interface HealthCheckEntryFormValues extends BaseEntryFormValues {
-  healthCheckRating: string;
+  healthCheckRating?: string;
+}
+
+export interface HospitalEntryFormValues extends BaseEntryFormValues {
+  discharge?: {
+    date?: string;
+    criteria?: string;
+  }
+}
+
+export interface OccupationalHealthcareEntryFormValues extends BaseEntryFormValues {
+  employerName?: string;
+  sickLeave?: {
+    startDate?: string,
+    endDate?: string
+  };
 }
 
 export type EntryFormValues = 
-| HealthCheckEntryFormValues;
+| HealthCheckEntryFormValues
+| HospitalEntryFormValues
+| OccupationalHealthcareEntryFormValues;
