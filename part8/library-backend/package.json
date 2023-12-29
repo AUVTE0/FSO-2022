@@ -1,0 +1,27 @@
+{
+  "name": "library-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AUVTE0/FSO-2022.git"
+  },
+  "author": "V Teh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AUVTE0/FSO-2022/issues"
+  },
+  "homepage": "https://github.com/AUVTE0/FSO-2022#readme",
+  "dependencies": {
+    "@apollo/server": "^4.9.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
