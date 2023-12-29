@@ -88,14 +88,31 @@ const resolvers = {
         const newAuthor = new Author({
           name: args.author,
         })
-        author = await newAuthor.save();
+        author = await newAuthor.save().catch(error => {
+          throw new GraphQLError('Saving new author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+              error
+            }
+          })
+        });
       }
       
       const newBook = new Book({
         ...args,
         author,
       });
-      return newBook.save();
+      return newBook.save()      
+        .catch(error => {
+          throw new GraphQLError('Adding book failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title,
+              error
+            }
+          })
+        });
     },
     editAuthor: (root, args) => {
       const author = authors.find(author => author.name === args.name);
