@@ -29,7 +29,7 @@ const Authors = (props) => {
         </tbody>
       </table>
       <h3>Set birthyear</h3>
-      <UpdateAuthor />
+      <UpdateAuthor nameOpts={data?.allAuthors?.map(a => a.name)}/>
     </div>
   )
 }
