@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/AUVTE0/FSO-2022#readme",
   "dependencies": {
-    "@apollo/server": "^4.9.5"
+    "@apollo/server": "^4.9.5",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
