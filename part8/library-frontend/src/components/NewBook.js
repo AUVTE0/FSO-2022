@@ -1,4 +1,7 @@
+import { useMutation } from '@apollo/client'
 import { useState } from 'react'
+import { CREATE_BOOK } from '../mutations'
+import { ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -6,21 +9,34 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const [error, setError] = useState(null)
+
+  const [ addBook ] = useMutation(CREATE_BOOK, {
+    refetchQueries: [  {query: ALL_BOOKS }, {query: ALL_AUTHORS} ],
+    onError: (error) => {
+      const messages = error.graphQLErrors.map(e => e.message)
+      setError(messages)
+    }
+  });
 
   if (!props.show) {
     return null
   }
 
   const submit = async (event) => {
+    
     event.preventDefault()
-
+    setError(null);
     console.log('add book...')
 
-    setTitle('')
-    setPublished('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
+    addBook({ variables: {title, author, published: parseInt(published), genres}})
+    if(!error) {
+      setTitle('')
+      setPublished('')
+      setAuthor('')
+      setGenres([])
+      setGenre('')
+    }
   }
 
   const addGenre = () => {
@@ -30,6 +46,13 @@ const NewBook = (props) => {
 
   return (
     <div>
+      {
+        error && error?.map(e => (
+          <div key={e} style={{color: 'red'}}>
+            {e}
+          </div>
+        ))
+      }
       <form onSubmit={submit}>
         <div>
           title
