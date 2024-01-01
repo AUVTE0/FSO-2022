@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CREATE_BOOK } from '../mutations'
 import { ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
@@ -10,14 +10,24 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
   const [error, setError] = useState(null)
+  const [addedBook, setAddedBook] = useState(null);
 
-  const [ addBook ] = useMutation(CREATE_BOOK, {
+  const [ addBook, result ] = useMutation(CREATE_BOOK, {
     refetchQueries: [  {query: ALL_BOOKS }, {query: ALL_AUTHORS} ],
     onError: (error) => {
-      const messages = error.graphQLErrors.map(e => e.message)
+      const messages = error.graphQLErrors.map(e => `${e.message} \n ${e.extensions.error.message}`)
       setError(messages)
     }
   });
+
+  useEffect(() => {
+    if(result?.data?.addBook){
+      setAddedBook(result.data.addBook.title);
+      setTimeout(() => {
+        setAddedBook(null);
+      }, 3000)
+    }
+  }, [result.data, props.show])
 
   if (!props.show) {
     return null
@@ -29,7 +39,7 @@ const NewBook = (props) => {
     setError(null);
     console.log('add book...')
 
-    addBook({ variables: {title, author, published: parseInt(published), genres}})
+    await addBook({ variables: {title, author, published: parseInt(published), genres}})
     if(!error) {
       setTitle('')
       setPublished('')
@@ -46,6 +56,12 @@ const NewBook = (props) => {
 
   return (
     <div>
+      {
+        addedBook && 
+          <div style={{color: 'green'}}>
+            Successfully added new book: {addedBook}
+          </div>
+      }
       {
         error && error?.map(e => (
           <div key={e} style={{color: 'red'}}>

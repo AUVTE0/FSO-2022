@@ -9,7 +9,9 @@ mutation ($title: String!, $author: String!, $published: Int!, $genres: [String!
     genres: $genres
   ) {
     title
-    author
+    author {
+      name
+    }
     published
     genres
   }
@@ -24,6 +26,17 @@ mutation ($name: String!, $born: Int!){
   ) {
     name
     born
+  }
+}
+`
+
+export const LOGIN = gql`
+mutation ($username: String!, $password: String!){
+  login (
+    username: $username,
+    password: $password
+  ) {
+    value
   }
 }
 `
