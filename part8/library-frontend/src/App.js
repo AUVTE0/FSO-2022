@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import Recommend from './components/Recommend'
 import Login from './components/Login'
 import {
   ApolloClient,
@@ -35,6 +36,12 @@ const App = () => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
 
+  useEffect(() => {
+    if(page === 'login' && token){
+      setPage('books');
+    }
+  }, [page, token]);
+
   const logout = () => {
     setToken(null);
     console.log('loging out')
@@ -50,6 +57,7 @@ const App = () => {
           <button onClick={() => setPage('books')}>books</button>
           {!token && <button onClick={() => setPage('login')}>login</button>}
           {token && <button onClick={() => setPage('add')}>add book</button>}
+          {token && <button onClick={() => setPage('recommend')}>recommend</button>}
           {token && <button onClick={() => logout()}>logout</button>}
         </div>
 
@@ -57,6 +65,7 @@ const App = () => {
         <Books show={page === 'books'} />
         <Login show={page === 'login'} setToken={setToken}/>
         <NewBook show={token && page === 'add' } />
+        <Recommend show={token && page === 'recommend' }  />
       </div>
     </ApolloProvider>
   )

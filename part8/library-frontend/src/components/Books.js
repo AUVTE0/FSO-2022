@@ -49,7 +49,7 @@ const Books = (props) => {
       </table>
 
       {[...allGenres].map((g) => 
-        <button onClick={() => setGenre(g)}>{g}</button>
+        <button key={g} onClick={() => setGenre(g)}>{g}</button>
       )}
       <button onClick={() => setGenre(null)}>all genres</button>
     </div>
