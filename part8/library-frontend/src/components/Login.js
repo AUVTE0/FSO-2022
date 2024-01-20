@@ -39,7 +39,7 @@ const Login = ({show, setToken}) => {
   return (
     <div>
       {
-        error && error?.map(e => (
+        error?.map(e => (
           <div key={e} style={{color: 'red'}}>
             {e}
           </div>
