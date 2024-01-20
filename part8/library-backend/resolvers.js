@@ -25,23 +25,13 @@ const resolvers = {
         return Book.find(filters).populate('author')
       },
       allAuthors: async () => {
-        const bookCounts = await Book.aggregate(
-          [
-            // First Stage
-            {
-              $group :
-                {
-                  _id : "$author",
-                  bookCount: { $sum: 1 }
-                }
-             },
-           ]
-        );
         const authors = await Author.find();
+        const books = await Book.find().populate('author');
+
         return authors.map(author => ({
           name: author.name,
           born: author.born,
-          bookCount: bookCounts.find(b => b._id.toString() == author._id.toString())?.bookCount || 0
+          bookCount: books.find(book => book.author.name === author.name).length || 0
         }))
       }
     },
