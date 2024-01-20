@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 
 const Recommend = (props) => {
   const [ genre, setGenre ] = useState(null);
-  const { data: userData, isLoading: isLoadingUser } = useQuery(ME);
-  const { data, isLoading } = useQuery(FILTERED_BOOKS, {
+  const { data: userData } = useQuery(ME);
+  const { data } = useQuery(FILTERED_BOOKS, {
     variables: { genre },
   });
 
@@ -30,7 +30,7 @@ const Recommend = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {data && data.allBooks.map((a) => (
+          {data?.allBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

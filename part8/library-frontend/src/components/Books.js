@@ -1,6 +1,7 @@
-import { useQuery } from "@apollo/client"
+import { useQuery, useSubscription } from "@apollo/client"
 import { ALL_BOOKS, FILTERED_BOOKS } from "../queries"
 import { useState, useEffect } from "react";
+import { BOOK_ADDED } from "../subscriptions";
 
 const Books = (props) => {
 
@@ -20,6 +21,12 @@ const Books = (props) => {
       setFilteredData(data);
     }
   }, [data, isLoading, dataByGenre, isLoadingByGenre, genre])
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      window.alert(`New book added: ${data.data.bookAdded.title}!`)
+    }
+  })
 
   const allGenres = data ? new Set(data.allBooks.reduce((a, n) => a.concat(n.genres), [])) : new Set();
 

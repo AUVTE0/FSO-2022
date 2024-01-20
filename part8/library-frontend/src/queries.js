@@ -18,28 +18,32 @@ query {
 }
 `
 
+export const BOOK_DETAILS = gql`
+fragment BookDetails on Book {
+  title
+  author {
+    name
+  }
+  published
+  genres
+}
+`
+
 export const ALL_BOOKS = gql`
 query {
   allBooks {
-    title
-    author {
-      name
-    }
-    published
-    genres
+    ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `
 
 export const FILTERED_BOOKS = gql`
 query ($genre: String!){
   allBooks (genre: $genre){
-    title
-    author {
-      name
-    }
-    published
-    genres
+    ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `
+
